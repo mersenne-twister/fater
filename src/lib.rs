@@ -1,16 +1,30 @@
 use std::fs;
 
 use parse::Story;
+#[cfg(target_arch = "wasm32")]
+use wasm_bindgen::prelude::wasm_bindgen;
 
-mod gui;
+#[cfg(not(target_arch = "wasm32"))]
+mod cli;
 mod parse;
+#[cfg(not(target_arch = "wasm32"))]
 mod tui;
+#[cfg(target_arch = "wasm32")]
+mod web;
 
-// TODO: set up parsing, to parse it into our data structure
 // then figure out tui renderer
 // then egui renderer, and with web
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn run() {
-    let str = fs::read_to_string("iraq-2004.fater").unwrap();
-    let story = Story::parse(&str);
+    let story = parse::load("iraq-2004.fater").unwrap().unwrap();
+
+    dbg!(story);
+}
+
+// entry point to web code
+#[wasm_bindgen(start)]
+#[cfg(target_arch = "wasm32")]
+pub fn run() {
+    web::run();
 }

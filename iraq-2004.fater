@@ -1,13 +1,16 @@
 START:
-Iraq, 2004. who are you?
+Iraq, 2004:
+who are you?
 cat -> CAT
-Thomas -. THOMAS
+Thomas -> THOMAS
 ---
 THOMAS:
+Thomas
 The Tank Engine -> TANK
 Jefferson -> JEFFERSON
 ---
 CAT:
+A cat
 girl -> GRAVEL
 boy -> CIA_CAPTURED
 purebred -> PUREBRED
@@ -132,6 +135,10 @@ suffocate.
 -> END
 ---
 TROLLEY:
+[[trolley.png]]
+# TODO: fater can also handle a .tar.gz renamed as .fater, containing
+# achive_name.fater as a text file, and any .png (or other?) images to be used
+# in it
 # TODO: imbed images
 pull -> CIA_CAPTURED
 don't pull ->  NUCLEAR
@@ -162,8 +169,20 @@ yes -> FOIE_GRAS
 no -> CRAIGSLIST
 ---
 CRAIGSLIST:
-You and Craig start Craigslist. After a period of time
+You and Craig start Craigslist. After a period of time you end up on Craig's
+list, and are promptly fired by the Board of Directors.
+consume Board of Directors -> BOARD
+consume alcohol -> ALCOHOL
 # TODO: get kicked out, fall into drink, die in obscurity at 37
+---
+BOARD:
+You consume the chalkboard containing a list of the Directors. You get lead
+poisoning, and die in obscurity of typhus as 37.
+-> END
+---
+ALCOHOL:
+You turn to drink, and die in obscurity of typhoid at 37.
+-> END
 ---
 PODCAST:
 Start a mildly successful podcast about your experiences
@@ -204,7 +223,7 @@ GET:
 They get you.
 -> ROT
 ---
-CONSUME_CIA
+CONSUME_CIA:
 Consume the Central Intelligence Agency?
 yes -> FOIE_GRAS
 no -> BILL
@@ -257,6 +276,7 @@ no -> PINEAPPLE
 ---
 CONSPICUOUS:
 You are too conspicuous as a catboy and are killed on your first assignment
+-> END
 ---
 PINEAPPLE:
 Do you like pineapple on pizza?
