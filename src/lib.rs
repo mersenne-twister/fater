@@ -17,7 +17,7 @@ mod web;
 
 #[cfg(not(target_arch = "wasm32"))]
 pub fn run() {
-    let story = parse::load("iraq-2004.fater").unwrap().unwrap();
+    let story = parse::load_file("iraq-2004.fater").unwrap().unwrap();
 
     dbg!(story);
 }

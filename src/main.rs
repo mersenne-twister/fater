@@ -1,3 +1,3 @@
 fn main() {
-    fater::run_cli();
+    fater::run();
 }

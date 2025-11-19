@@ -2,14 +2,28 @@ use std::{
     collections::HashMap, error::Error, fmt::Display, fs, io, num::TryFromIntError, path::Path,
 };
 
-pub fn load(path: impl AsRef<Path>) -> io::Result<ParseResult<Story>> {
+use wasm_bindgen::prelude::wasm_bindgen;
+
+pub fn load_file(path: impl AsRef<Path>) -> io::Result<ParseResult<Story>> {
     Ok(Story::parse(&fs::read_to_string(path)?))
 }
 
+pub fn load_str(str: &str) -> ParseResult<Story> {
+    Story::parse(str)
+}
+
+// #[wasm_bindgen]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Story {
     sections: HashMap<SectionIdentifier, Section>,
 }
+
+// #[cfg(target_arch = "wasm32")]
+// #[wasm_bindgen]
+// #[derive(Clone, Debug, PartialEq, Eq)]
+// pub struct Story {
+//     sections: HashMap<SectionIdentifier, Section>,
+// }
 
 impl Story {
     pub fn parse(story: &str) -> ParseResult<Story> {
@@ -67,10 +81,14 @@ impl Story {
 
         Ok(Self { sections })
     }
+
+    pub fn sections(&self) -> &HashMap<SectionIdentifier, Section> {
+        &self.sections
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
-struct Section {
+pub struct Section {
     identifier: SectionIdentifier,
     description: Description,
     choices: Vec<Choice>,
@@ -233,6 +251,35 @@ impl Section {
     }
 }
 
+impl Display for Section {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            r#"<div id="description">
+    <p>
+        {}
+    </p>
+</div>
+<div id="choices">"#,
+            self.description
+        )?;
+
+        for choice in &self.choices {
+            write!(
+                f,
+                r#"<div class="choice" data-fater-goto="{}">
+    <span>
+        {}
+    </span>
+</div>"#,
+                choice.goto, choice.description
+            )?;
+        }
+
+        write!(f, "</div>")
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
 struct Choice {
     description: Description,
@@ -278,12 +325,13 @@ impl Choice {
 // just a newtype, that's all caps, numeric, and underscores
 // must have *some* alphabetic. can't be all underscores/numeric
 #[derive(Hash, Clone, Debug, PartialEq, PartialOrd, Ord, Eq)]
-struct SectionIdentifier(String);
+pub struct SectionIdentifier(String);
 
+// TODO: figure out solution for these being public
 impl SectionIdentifier {
     // def is whether it's a definition (in which case we want a final colon),
     // or not, in which case we don't
-    fn parse((line_num, mut str): (usize, &str), def: bool) -> ParseResult<Self> {
+    pub fn parse((line_num, mut str): (usize, &str), def: bool) -> ParseResult<Self> {
         let mut found_alphabetic = false;
         let mut colon = false;
 
